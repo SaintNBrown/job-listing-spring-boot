@@ -1,5 +1,7 @@
 package com.careerhub.joblisting.security;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +24,9 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.careerhub.joblisting.models.ERole;
+import com.careerhub.joblisting.models.Role;
+import com.careerhub.joblisting.repository.RoleRepository;
 import com.careerhub.joblisting.security.jwt.AuthEntryPointJwt;
 import com.careerhub.joblisting.security.jwt.AuthTokenFilter;
 import com.careerhub.joblisting.security.service.UserDetailsServiceImpl;
@@ -72,8 +77,10 @@ public class ApplicationConfig {
 				.authorizeHttpRequests(
 						authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
 								.requestMatchers(HttpMethod.DELETE).hasRole("ADMIN").requestMatchers("/admin/**")
-								.hasAnyRole("ADMIN").requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-								.requestMatchers("/login/**").permitAll().requestMatchers("/signUp/**").permitAll()
+								.hasAnyRole("ADMIN")
+								.requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
+								.requestMatchers("/api/auth/login/**").permitAll()
+								.requestMatchers("/api/auth/signup/**").permitAll()
 								.anyRequest().authenticated());
 
 		http.authenticationProvider(authenticationProvider());
@@ -86,6 +93,18 @@ public class ApplicationConfig {
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
 		return web -> web.ignoring().requestMatchers("/css/**", "/js/**", "/img/**", "/lib/**", "/favicon.ico");
+	}
+	
+	@Bean
+	public RoleRepository roleRepository() {
+		return new RoleRepository() {
+			
+			@Override
+			public Optional<Role> findByName(ERole name) {
+				// TODO Auto-generated method stub
+				return Optional.empty();
+			}
+		};
 	}
 
 }

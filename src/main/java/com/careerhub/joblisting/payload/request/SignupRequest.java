@@ -2,6 +2,9 @@ package com.careerhub.joblisting.payload.request;
 
 import java.util.Set;
 
+import lombok.Builder;
+
+@Builder
 public class SignupRequest {
 	private String username;
 	private String password;
